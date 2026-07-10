@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard BRS</title>
-  <link.css
-  plugin-api.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
   https://cdn.jsdelivr.net/npm/chart.js
 </head>
 <body>
-  <!-- BARRE DE FILTRES -->
   <div id="filters">
     <select id="f_commune"><option value="">Commune</option></select>
     <select id="f_arr"><option value="">Arrondissement</option></select>
@@ -21,7 +20,6 @@
   </div>
 
   <div id="grid">
-    <!-- Colonne gauche -->
     <div class="col-left">
       <div class="card">
         <h3>ZONAGE (répartition)</h3>
@@ -38,7 +36,6 @@
       </div>
     </div>
 
-    <!-- Colonne droite -->
     <div class="col-right">
       <div class="card big-kpi">
         <h3>NOMBRE D'OPÉRATIONS</h3>
