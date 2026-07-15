@@ -3,50 +3,76 @@ let chart = null;
 
 // --- Formatage ---
 const fmtInt = (n) => (n || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 });
-const fmtEur = (n) => (n || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' €';
+const fmtEur = (n) => (n || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' \u20AC';
 const fmtPct = (n) => ((n || 0) * 100).toFixed(1) + ' %';
 
-// --- Utilitaires DOM ---
 const $ = (id) => document.getElementById(id);
-const setStatus = (msg) => { $('status').textContent = msg; };
+const setStatus = (msg) => { const s = $('status'); if (s) s.textContent = msg; console.log('[BRS]', msg); };
 const v = (id) => $(id).value;
 const sum = (arr, key) => arr.reduce((s, r) => s + (Number(r[key]) || 0), 0);
 
-// --- Mapping des colonnes Grist ---
-// ⚠️ Ces noms doivent correspondre EXACTEMENT aux Column IDs dans ta table Grist
+// --- Mapping colonnes Grist ---
 const COLS = {
-  commune:      'Commune',
+  commune:        'Commune',
   arrondissement: 'Arrondissement',
-  zonage:       'Zonage',
-  typologie:    'Typologie',
-  operateur:    'Operateur',
-  statut:       'Statut_Operation',
-  avancement:   'Etat_Avancement',
-  nbTot:        'Nb_logts_Total',
-  nbBrs:        'Nb_logts_BRS',
-  brsClass:     'Nb_BRS_classique',
-  brsPrem:      'Nb_BRS_premium',
-  fp:           'Montant_FP',
-  gaia:         'Montant_pret_GAIA',
-  als:          'Montant_pret_ALS',
-  tfc:          'Montant_total_acquisition_TFC'
+  zonage:         'Zonage',
+  typologie:      'Typologie',
+  operateur:      'Operateur',
+  statut:         'Statut_Operation',
+  avancement:     'Etat_Avancement',
+  nbTot:          'Nb_logts_Total',
+  nbBrs:          'Nb_logts_BRS',
+  brsClass:       'Nb_BRS_classique',
+  brsPrem:        'Nb_BRS_premium',
+  fp:             'Montant_FP',
+  gaia:           'Montant_pret_GAIA',
+  als:            'Montant_pret_ALS',
+  tfc:            'Montant_total_acquisition_TFC'
 };
 
-// --- Initialisation Grist ---
-setStatus('Connexion à Grist…');
-grist.ready({
-  requiredAccess: 'read table',
-  columns: Object.values(COLS).map(id => ({ name: id, optional: true }))
-});
+// --- DIAGNOSTIC INIT ---
+setStatus('Etape 1/4 : verification API Grist...');
 
-grist.onRecords((records, mappings) => {
-  ALL = records || [];
-  setStatus(`✅ ${ALL.length} enregistrement(s) chargé(s) depuis Grist`);
-  buildFilters();
-  refresh();
-});
+if (typeof grist === 'undefined') {
+  setStatus('ERREUR : API Grist non trouvee. Ouvre ce widget DANS Grist via une vue Custom, pas directement dans le navigateur.');
+} else {
+  setStatus('Etape 2/4 : API Grist detectee, appel de grist.ready()...');
 
-// --- Construction des filtres ---
+  try {
+    grist.ready({
+      requiredAccess: 'full',
+      onEditOptions: () => {}
+    });
+    setStatus('Etape 3/4 : grist.ready() OK, en attente des donnees...');
+  } catch (e) {
+    setStatus('ERREUR grist.ready : ' + e.message);
+  }
+
+  // Callback principal : donnees de la table
+  grist.onRecords((records, mappings) => {
+    if (!records || records.length === 0) {
+      setStatus('AVERTISSEMENT : Grist a repondu mais 0 enregistrement. La table est-elle vide ou un filtre est-il actif ?');
+      ALL = [];
+    } else {
+      ALL = records;
+      const firstRow = records[0];
+      const availableCols = Object.keys(firstRow).join(', ');
+      setStatus('Etape 4/4 OK : ' + records.length + ' lignes chargees. Colonnes recues : ' + availableCols);
+      console.log('[BRS] Exemple de ligne :', firstRow);
+    }
+    buildFilters();
+    refresh();
+  });
+
+  // Fallback : si onRecords ne se declenche jamais, on essaie fetchSelectedTable apres 3s
+  setTimeout(() => {
+    if (ALL.length === 0) {
+      setStatus('Aucune donnee recue apres 3s. Verifie Access Level = Full document access dans le widget Grist.');
+    }
+  }, 3000);
+}
+
+// --- Filtres ---
 function buildFilters() {
   const fields = {
     f_commune:   COLS.commune,
@@ -57,16 +83,12 @@ function buildFilters() {
     f_statut:    COLS.statut,
     f_avanc:     COLS.avancement
   };
-
   for (const [id, col] of Object.entries(fields)) {
     const sel = $(id);
     if (!sel) continue;
-    const label = sel.options[0]?.text || col;
-    sel.innerHTML = `<option value="">${label}</option>`;
-    const vals = [...new Set(
-      ALL.map(r => r[col])
-         .filter(x => x !== null && x !== undefined && x !== '')
-    )].sort();
+    const label = sel.options[0] ? sel.options[0].text : col;
+    sel.innerHTML = '<option value="">' + label + '</option>';
+    const vals = [...new Set(ALL.map(r => r[col]).filter(x => x !== null && x !== undefined && x !== ''))].sort();
     vals.forEach(val => {
       const o = document.createElement('option');
       o.value = val;
@@ -75,75 +97,62 @@ function buildFilters() {
     });
     sel.onchange = refresh;
   }
-
   $('reset').onclick = () => {
     document.querySelectorAll('#filters select').forEach(s => s.value = '');
     refresh();
   };
 }
 
-// --- Filtrage ---
 function filtered() {
   const f = {
-    [COLS.commune]:       v('f_commune'),
+    [COLS.commune]:        v('f_commune'),
     [COLS.arrondissement]: v('f_arr'),
-    [COLS.zonage]:        v('f_zonage'),
-    [COLS.typologie]:     v('f_typo'),
-    [COLS.operateur]:     v('f_operateur'),
-    [COLS.statut]:        v('f_statut'),
-    [COLS.avancement]:    v('f_avanc')
+    [COLS.zonage]:         v('f_zonage'),
+    [COLS.typologie]:      v('f_typo'),
+    [COLS.operateur]:      v('f_operateur'),
+    [COLS.statut]:         v('f_statut'),
+    [COLS.avancement]:     v('f_avanc')
   };
   return ALL.filter(r =>
     Object.entries(f).every(([k, val]) => !val || r[k] === val)
   );
 }
 
-// --- Rafraîchissement complet ---
 function refresh() {
   const rows = filtered();
-
-  // Compteur bas de barre
-  $('rowCount').textContent = `${rows.length} ligne(s)`;
-
-  // KPI principal
+  $('rowCount').textContent = rows.length + ' ligne(s)';
   $('nbOp').textContent = rows.length;
 
-  // Logements
   const nbTot = sum(rows, COLS.nbTot);
   const brsC  = sum(rows, COLS.brsClass);
   const brsP  = sum(rows, COLS.brsPrem);
   const brsTotal = sum(rows, COLS.nbBrs);
 
-  $('nbTot').textContent  = fmtInt(nbTot);
-  $('brsC').textContent   = fmtInt(brsC);
-  $('brsP').textContent   = fmtInt(brsP);
+  $('nbTot').textContent   = fmtInt(nbTot);
+  $('brsC').textContent    = fmtInt(brsC);
+  $('brsP').textContent    = fmtInt(brsP);
   $('partBrs').textContent = fmtPct(nbTot ? brsTotal / nbTot : 0);
 
-  // BRS par zone
   const brsA  = sum(rows.filter(r => r[COLS.zonage] === 'A'),  COLS.nbBrs);
   const brsB1 = sum(rows.filter(r => r[COLS.zonage] === 'B1'), COLS.nbBrs);
   $('brsA').textContent   = fmtInt(brsA);
   $('brsB1').textContent  = fmtInt(brsB1);
   $('brsTot').textContent = fmtInt(brsA + brsB1);
 
-  // Logements par zone
   const zA  = sum(rows.filter(r => r[COLS.zonage] === 'A'),  COLS.nbTot);
   const zB1 = sum(rows.filter(r => r[COLS.zonage] === 'B1'), COLS.nbTot);
   $('zA').textContent   = fmtInt(zA);
   $('zB1').textContent  = fmtInt(zB1);
   $('zTot').textContent = fmtInt(zA + zB1);
 
-  // Engagements €
   $('fp').textContent   = fmtEur(sum(rows, COLS.fp));
   $('gaia').textContent = fmtEur(sum(rows, COLS.gaia));
   $('als').textContent  = fmtEur(sum(rows, COLS.als));
   $('tfc').textContent  = fmtEur(sum(rows, COLS.tfc));
 
-  // Camembert
   drawPie(zA, zB1);
 }
 
-// --- Graphique zonage ---
 function drawPie(zA, zB1) {
   const canvas = $('pieZonage');
   if (!canvas || typeof Chart === 'undefined') return;
@@ -157,11 +166,7 @@ function drawPie(zA, zB1) {
       borderWidth: 2
     }]
   };
-  if (chart) {
-    chart.data = data;
-    chart.update();
-    return;
-  }
+  if (chart) { chart.data = data; chart.update(); return; }
   chart = new Chart(ctx, {
     type: 'pie',
     data,
@@ -174,7 +179,7 @@ function drawPie(zA, zB1) {
             label: (c) => {
               const total = zA + zB1;
               const pct = total ? ((c.parsed / total) * 100).toFixed(1) : 0;
-              return `${c.label}: ${fmtInt(c.parsed)} (${pct}%)`;
+              return c.label + ': ' + fmtInt(c.parsed) + ' (' + pct + '%)';
             }
           }
         }
