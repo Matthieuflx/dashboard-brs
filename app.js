@@ -1,16 +1,14 @@
 console.log("APP CHARGEE");
-console.log(typeof grist);
+
 grist.ready({
-  requiredAccess: "read table"
+  requiredAccess: 'read table'
 });
 
 grist.onRecords(records => {
 
-  console.log("DONNEES RECUES :", records);
+  console.log("DONNEES :", records);
 
-  alert(
-    "Nombre de lignes : " +
-    records.length
-  );
+  document.getElementById("nb").textContent =
+    records.length;
 
 });
