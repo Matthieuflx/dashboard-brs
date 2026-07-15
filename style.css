@@ -1,4 +1,8 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -19,6 +23,7 @@ body {
   border-radius: 6px;
   align-items: center;
 }
+
 #filters select,
 #filters button {
   background: #3a3a3a;
@@ -29,26 +34,33 @@ body {
   font-size: 13px;
   cursor: pointer;
 }
+
 #filters button {
   background: #ff9500;
   color: #1e1e1e;
   font-weight: 600;
   border: none;
 }
-#filters button:hover { background: #ffad33; }
+
+#filters button:hover {
+  background: #ffad33;
+}
+
 #rowCount {
   margin-left: auto;
   font-size: 12px;
   color: #a0a0a0;
 }
 
-/* --- GRILLE PRINCIPALE --- */
+/* --- GRILLE --- */
 #grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-.col-left, .col-right {
+
+.col-left,
+.col-right {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -60,6 +72,7 @@ body {
   border-radius: 6px;
   padding: 14px;
 }
+
 .card h3 {
   font-size: 13px;
   color: #a0a0a0;
@@ -73,6 +86,7 @@ body {
   text-align: center;
   border-left: 4px solid #ff9500;
 }
+
 .big-kpi #nbOp {
   font-size: 72px;
   font-weight: 700;
@@ -86,27 +100,32 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+
 .kpi {
   background: #333;
   border-radius: 4px;
   padding: 8px 10px;
 }
+
 .kpi label {
   display: block;
   font-size: 11px;
   color: #999;
   margin-bottom: 4px;
 }
+
 .kpi span {
   font-size: 15px;
   font-weight: 600;
   color: #fff;
 }
 
-/* --- GRAPH --- */
-#pieZonage { max-height: 260px; }
+/* --- GRAPHIQUE --- */
+#pieZonage {
+  max-height: 260px;
+}
 
-/* --- STATUS (debug bas de page) --- */
+/* --- STATUS --- */
 #status {
   margin-top: 14px;
   padding: 8px 12px;
@@ -119,6 +138,10 @@ body {
 
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
-  #grid { grid-template-columns: 1fr; }
-  .big-kpi #nbOp { font-size: 56px; }
+  #grid {
+    grid-template-columns: 1fr;
+  }
+  .big-kpi #nbOp {
+    font-size: 56px;
+  }
 }
