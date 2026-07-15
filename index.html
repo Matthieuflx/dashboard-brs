@@ -4,9 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard BRS - FSGL</title>
-  style.css
-  s.getgrist.com/grist-plugin-api.js"></script>
-  .net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Feuille de style -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- API Grist -->
+  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 </head>
 <body>
 
@@ -15,10 +22,10 @@
     <select id="f_arr"><option value="">Arrondissement</option></select>
     <select id="f_zonage"><option value="">Zonage</option></select>
     <select id="f_typo"><option value="">Typologie</option></select>
-    <select id="f_operateur"><option value="">Opérateur</option></select>
+    <select id="f_operateur"><option value="">Operateur</option></select>
     <select id="f_statut"><option value="">Statut</option></select>
     <select id="f_avanc"><option value="">Avancement</option></select>
-    <button id="reset" type="button">🔄 Réinitialiser</button>
+    <button id="reset" type="button">Reinitialiser</button>
     <span id="rowCount">- lignes</span>
   </div>
 
@@ -26,15 +33,15 @@
 
     <div class="col-left">
       <div class="card">
-        <h3>Zonage (répartition)</h3>
+        <h3>Zonage (repartition)</h3>
         <canvas id="pieZonage"></canvas>
       </div>
       <div class="card">
         <h3>Engagement</h3>
         <div class="kpi-grid">
           <div class="kpi"><label>Montant FP</label><span id="fp">-</span></div>
-          <div class="kpi"><label>Prêt GAIA</label><span id="gaia">-</span></div>
-          <div class="kpi"><label>Prêt ALS</label><span id="als">-</span></div>
+          <div class="kpi"><label>Pret GAIA</label><span id="gaia">-</span></div>
+          <div class="kpi"><label>Pret ALS</label><span id="als">-</span></div>
           <div class="kpi"><label>Acquisition TFC</label><span id="tfc">-</span></div>
         </div>
       </div>
@@ -42,9 +49,10 @@
 
     <div class="col-right">
       <div class="card big-kpi">
-        <h3>Nombre d'opérations</h3>
+        <h3>Nombre d'operations</h3>
         <div id="nbOp">-</div>
       </div>
+
       <div class="card">
         <h3>Part de logement BRS</h3>
         <div class="kpi-grid">
@@ -54,6 +62,7 @@
           <div class="kpi"><label>BRS premium</label><span id="brsP">-</span></div>
         </div>
       </div>
+
       <div class="card">
         <h3>BRS par zone</h3>
         <div class="kpi-grid">
@@ -62,6 +71,7 @@
           <div class="kpi"><label>BRS total</label><span id="brsTot">-</span></div>
         </div>
       </div>
+
       <div class="card">
         <h3>Logements par zone</h3>
         <div class="kpi-grid">
@@ -70,8 +80,8 @@
           <div class="kpi"><label>Total</label><span id="zTot">-</span></div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
   <div id="status">Initialisation...</div>
