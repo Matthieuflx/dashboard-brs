@@ -12,6 +12,7 @@ const v = (id) => $(id).value;
 const sum = (arr, key) => arr.reduce((s, r) => s + (Number(r[key]) || 0), 0);
 
 // --- Mapping colonnes Grist ---
+// --- Mapping colonnes Grist ---
 const COLS = {
   commune:        'Commune',
   arrondissement: 'Arrondissement',
@@ -20,14 +21,14 @@ const COLS = {
   operateur:      'Operateur',
   statut:         'Statut_Operation',
   avancement:     'Etat_Avancement',
-  nbTot:          'Nb_logts_Total',
-  nbBrs:          'Nb_logts_BRS',
-  brsClass:       'Nb_BRS_classique',
-  brsPrem:        'Nb_BRS_premium',
-  fp:             'Montant_FP',
-  gaia:           'Montant_pret_GAIA',
-  als:            'Montant_pret_ALS',
-  tfc:            'Montant_total_acquisition_TFC'
+  nbTot:          'Nb_Logts_Operation',
+  nbBrs:          'Nb_Logts_BRS_Total',
+  brsClass:       'Nb_Logts_BRS_Classique',
+  brsPrem:        'Nb_Logts_BRS_Premium',
+  fp:             'Engagement_Montant_FP',
+  gaia:           'Engagement_Montant_GAIA',
+  als:            'Engagement_Montant_ALS',
+  tfc:            'Engagement_Montant_Total_TFC'
 };
 
 // --- DIAGNOSTIC INIT ---
