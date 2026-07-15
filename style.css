@@ -1,31 +1,212 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: -apple-system, Segoe UI, sans-serif;
-  background: #1e1e1e; color: #eaeaea; padding: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #111827;
+  color: #e5e7eb;
+  padding: 14px;
 }
-#filters {
-  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
-  background: #2a2a2a; padding: 10px; border-radius: 6px;
+
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
 }
-#filters select, #filters button {
-  background: #3a3a3a; color: #eaeaea; border: 1px solid #555;
-  padding: 6px 10px; border-radius: 4px; font-size: 13px;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
-#filters button { cursor: pointer; background: #ff9500; color: #1e1e1e; font-weight: 600; border: none; }
-#filters button:hover { background: #ffb347; }
 
-#grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.col-left, .col-right { display: flex; flex-direction: column; gap: 14px; }
+.header h1 {
+  font-size: 24px;
+  font-weight: 750;
+}
 
-.card { background: #2a2a2a; border-radius: 6px; padding: 14px; }
-.card h3 { font-size: 13px; color: #a0a0a0; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.header p {
+  color: #9ca3af;
+  font-size: 13px;
+  margin-top: 3px;
+}
 
-.big-kpi { text-align: center; border-left: 4px solid #ff9500; }
-.big-kpi #nbOp { font-size: 72px; font-weight: 700; color: #ff9500; line-height: 1; }
+.badge {
+  background: #f59e0b;
+  color: #111827;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+}
 
-.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.kpi { background: #333; border-radius: 4px; padding: 8px 10px; }
-.kpi label { display: block; font-size: 11px; color: #999; margin-bottom: 4px; }
-.kpi span { font-size: 15px; font-weight: 600; color: #fff; }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+}
 
-#pieZonage { max-height: 300px; }
+.filters select,
+.filters button {
+  background: #111827;
+  color: #e5e7eb;
+  border: 1px solid #4b5563;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.filters button {
+  cursor: pointer;
+  background: #f59e0b;
+  color: #111827;
+  font-weight: 700;
+  border: none;
+}
+
+.filters button:hover {
+  background: #fbbf24;
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.card h3 {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-main {
+  border-left: 4px solid #f59e0b;
+}
+
+.kpi-label {
+  display: block;
+  color: #9ca3af;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.kpi-main strong {
+  display: block;
+  color: #ffffff;
+  font-size: 34px;
+  line-height: 1;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mini-kpi {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.mini-kpi label {
+  display: block;
+  color: #9ca3af;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.mini-kpi span {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+#pieZonage {
+  width: 100%;
+  height: 280px;
+  max-height: 280px;
+}
+
+.table-card {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  background: #111827;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #374151;
+  text-align: left;
+}
+
+th {
+  color: #9ca3af;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.status {
+  display: inline-block;
+  background: #374151;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.empty {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .kpi-row,
+  #grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+  }
+}
+``
