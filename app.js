@@ -9,9 +9,21 @@ const fmtPct = (n) => ((n || 0) * 100).toFixed(1) + ' %';
 const $ = (id) => document.getElementById(id);
 const setStatus = (msg) => { const s = $('status'); if (s) s.textContent = msg; console.log('[BRS]', msg); };
 const v = (id) => $(id).value;
-const sum = (arr, key) => arr.reduce((s, r) => s + (Number(r[key]) || 0), 0);
 
-// --- Mapping colonnes Grist ---
+// Conversion robuste vers nombre (gère string, virgule fr, null, etc.)
+const num = (x) => {
+  if (x === null || x === undefined || x === '') return 0;
+  if (typeof x === 'number') return x;
+  const s = String(x).replace(/\s/g, '').replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+};
+
+const sum = (arr, key) => arr.reduce((s, r) => s + num(r[key]), 0);
+
+// Normalisation string (trim + uppercase) pour comparaisons
+const norm = (x) => (x === null || x === undefined) ? '' : String(x).trim().toUpperCase();
+
 // --- Mapping colonnes Grist ---
 const COLS = {
   commune:        'Commune',
@@ -31,45 +43,42 @@ const COLS = {
   tfc:            'Engagement_Montant_Total_TFC'
 };
 
-// --- DIAGNOSTIC INIT ---
-setStatus('Etape 1/4 : verification API Grist...');
+// --- Init Grist ---
+setStatus('Connexion a Grist...');
 
 if (typeof grist === 'undefined') {
-  setStatus('ERREUR : API Grist non trouvee. Ouvre ce widget DANS Grist via une vue Custom, pas directement dans le navigateur.');
+  setStatus('ERREUR : API Grist non trouvee.');
 } else {
-  setStatus('Etape 2/4 : API Grist detectee, appel de grist.ready()...');
+  grist.ready({ requiredAccess: 'full' });
 
-  try {
-    grist.ready({
-      requiredAccess: 'full',
-      onEditOptions: () => {}
-    });
-    setStatus('Etape 3/4 : grist.ready() OK, en attente des donnees...');
-  } catch (e) {
-    setStatus('ERREUR grist.ready : ' + e.message);
-  }
-
-  // Callback principal : donnees de la table
-  grist.onRecords((records, mappings) => {
+  grist.onRecords((records) => {
     if (!records || records.length === 0) {
-      setStatus('AVERTISSEMENT : Grist a repondu mais 0 enregistrement. La table est-elle vide ou un filtre est-il actif ?');
+      setStatus('0 enregistrement recu');
       ALL = [];
     } else {
       ALL = records;
-      const firstRow = records[0];
-      const availableCols = Object.keys(firstRow).join(', ');
-      setStatus('Etape 4/4 OK : ' + records.length + ' lignes chargees. Colonnes recues : ' + availableCols);
-      console.log('[BRS] Exemple de ligne :', firstRow);
+      const r0 = records[0];
+
+      // DEBUG : afficher les valeurs de la premiere ligne pour les colonnes cles
+      console.log('=== DEBUG PREMIERE LIGNE ===');
+      console.log('Zonage brut:', JSON.stringify(r0[COLS.zonage]), 'type:', typeof r0[COLS.zonage]);
+      console.log('Nb_Logts_Operation brut:', JSON.stringify(r0[COLS.nbTot]), 'type:', typeof r0[COLS.nbTot]);
+      console.log('Nb_Logts_BRS_Total brut:', JSON.stringify(r0[COLS.nbBrs]), 'type:', typeof r0[COLS.nbBrs]);
+      console.log('Engagement_Montant_FP brut:', JSON.stringify(r0[COLS.fp]), 'type:', typeof r0[COLS.fp]);
+      console.log('Ligne complete:', r0);
+
+      // Compter les valeurs uniques de Zonage
+      const zonages = [...new Set(records.map(r => JSON.stringify(r[COLS.zonage])))];
+      console.log('Valeurs uniques Zonage:', zonages);
+
+      setStatus('OK ' + records.length + ' lignes. Zonages: ' + zonages.join(' | '));
     }
     buildFilters();
     refresh();
   });
 
-  // Fallback : si onRecords ne se declenche jamais, on essaie fetchSelectedTable apres 3s
   setTimeout(() => {
-    if (ALL.length === 0) {
-      setStatus('Aucune donnee recue apres 3s. Verifie Access Level = Full document access dans le widget Grist.');
-    }
+    if (ALL.length === 0) setStatus('Aucune donnee apres 3s. Verifie Access Level.');
   }, 3000);
 }
 
@@ -89,7 +98,10 @@ function buildFilters() {
     if (!sel) continue;
     const label = sel.options[0] ? sel.options[0].text : col;
     sel.innerHTML = '<option value="">' + label + '</option>';
-    const vals = [...new Set(ALL.map(r => r[col]).filter(x => x !== null && x !== undefined && x !== ''))].sort();
+    const vals = [...new Set(
+      ALL.map(r => r[col])
+         .filter(x => x !== null && x !== undefined && x !== '')
+    )].sort();
     vals.forEach(val => {
       const o = document.createElement('option');
       o.value = val;
@@ -115,7 +127,7 @@ function filtered() {
     [COLS.avancement]:     v('f_avanc')
   };
   return ALL.filter(r =>
-    Object.entries(f).every(([k, val]) => !val || r[k] === val)
+    Object.entries(f).every(([k, val]) => !val || String(r[k]) === String(val))
   );
 }
 
@@ -124,9 +136,9 @@ function refresh() {
   $('rowCount').textContent = rows.length + ' ligne(s)';
   $('nbOp').textContent = rows.length;
 
-  const nbTot = sum(rows, COLS.nbTot);
-  const brsC  = sum(rows, COLS.brsClass);
-  const brsP  = sum(rows, COLS.brsPrem);
+  const nbTot    = sum(rows, COLS.nbTot);
+  const brsC     = sum(rows, COLS.brsClass);
+  const brsP     = sum(rows, COLS.brsPrem);
   const brsTotal = sum(rows, COLS.nbBrs);
 
   $('nbTot').textContent   = fmtInt(nbTot);
@@ -134,14 +146,18 @@ function refresh() {
   $('brsP').textContent    = fmtInt(brsP);
   $('partBrs').textContent = fmtPct(nbTot ? brsTotal / nbTot : 0);
 
-  const brsA  = sum(rows.filter(r => r[COLS.zonage] === 'A'),  COLS.nbBrs);
-  const brsB1 = sum(rows.filter(r => r[COLS.zonage] === 'B1'), COLS.nbBrs);
+  // Zonage : comparaison robuste (case-insensitive, trim)
+  const isA  = (r) => norm(r[COLS.zonage]) === 'A';
+  const isB1 = (r) => norm(r[COLS.zonage]) === 'B1';
+
+  const brsA  = sum(rows.filter(isA),  COLS.nbBrs);
+  const brsB1 = sum(rows.filter(isB1), COLS.nbBrs);
   $('brsA').textContent   = fmtInt(brsA);
   $('brsB1').textContent  = fmtInt(brsB1);
   $('brsTot').textContent = fmtInt(brsA + brsB1);
 
-  const zA  = sum(rows.filter(r => r[COLS.zonage] === 'A'),  COLS.nbTot);
-  const zB1 = sum(rows.filter(r => r[COLS.zonage] === 'B1'), COLS.nbTot);
+  const zA  = sum(rows.filter(isA),  COLS.nbTot);
+  const zB1 = sum(rows.filter(isB1), COLS.nbTot);
   $('zA').textContent   = fmtInt(zA);
   $('zB1').textContent  = fmtInt(zB1);
   $('zTot').textContent = fmtInt(zA + zB1);
