@@ -1,98 +1,131 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Dashboard BRS - POC Grist</title>
+
+  style.css
 
   https://docs.getgrist.com/grist-plugin-api.jsscript>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+
   <div class="page">
 
     <header class="header">
       <div>
         <h1>Dashboard BRS</h1>
-        <p>POC Grist - suivi des opérations</p>
+        <p>POC GRIST - Grand Lyon</p>
       </div>
-      <div class="badge">Grand Lyon / FSGL</div>
+
+      <span class="badge">
+        FSGL
+      </span>
     </header>
 
     <section id="filters" class="filters">
-      <select id="f_commune"><option value="">Commune</option></select>
-      <select id="f_arr"><option value="">Arrondissement</option></select>
-      <select id="f_zonage"><option value="">Zonage</option></select>
-      <select id="f_typo"><option value="">Typologie</option></select>
-      <select id="f_operateur"><option value="">Opérateur</option></select>
-      <select id="f_statut"><option value="">Statut</option></select>
-      <select id="f_avanc"><option value="">Avancement</option></select>
-      <button id="reset">Réinitialiser</button>
+
+      <select id="f_commune">
+        <option value="">Commune</option>
+      </select>
+
+      <select id="f_arr">
+        <option value="">Arrondissement</option>
+      </select>
+
+      <select id="f_zonage">
+        <option value="">Zonage</option>
+      </select>
+
+      <select id="f_typo">
+        <option value="">Typologie</option>
+      </select>
+
+      <select id="f_operateur">
+        <option value="">Opérateur</option>
+      </select>
+
+      <select id="f_statut">
+        <option value="">Statut</option>
+      </select>
+
+      <button id="reset">
+        Réinitialiser
+      </button>
+
     </section>
 
     <section class="kpi-row">
-      <div class="card kpi-main">
-        <span class="kpi-label">Opérations chapeau</span>
-        <strong id="nbOp">–</strong>
+
+      <div class="kpi-card">
+        <span>Opérations</span>
+        <strong id="nbOp">0</strong>
       </div>
 
-      <div class="card kpi-main">
-        <span class="kpi-label">Logements BRS</span>
-        <strong id="brsTot">–</strong>
+      <div class="kpi-card">
+        <span>Logements</span>
+        <strong id="nbTot">0</strong>
       </div>
 
-      <div class="card kpi-main">
-        <span class="kpi-label">Total logements</span>
-        <strong id="nbTot">–</strong>
+      <div class="kpi-card">
+        <span>Logements BRS</span>
+        <strong id="brsTot">0</strong>
       </div>
 
-      <div class="card kpi-main">
-        <span class="kpi-label">Part BRS</span>
-        <strong id="partBrs">–</strong>
+      <div class="kpi-card">
+        <span>Part BRS</span>
+        <strong id="partBrs">0%</strong>
       </div>
+
     </section>
 
-    <section id="grid">
+    <section class="main-grid">
+
       <div class="card">
-        <h3>Répartition des logements par zonage</h3>
+        <h3>Répartition zonage</h3>
         <canvas id="pieZonage"></canvas>
       </div>
 
       <div class="card">
-        <h3>Statuts des opérations</h3>
+
+        <h3>Financement</h3>
+
         <div class="mini-grid">
-          <div class="mini-kpi"><label>Engagées</label><span id="opEng">–</span></div>
-          <div class="mini-kpi"><label>Désengagées</label><span id="opDes">–</span></div>
-          <div class="mini-kpi"><label>Prospects</label><span id="opPro">–</span></div>
+
+          <div class="mini-kpi">
+            <label>FP</label>
+            <span id="fp">0 €</span>
+          </div>
+
+          <div class="mini-kpi">
+            <label>GAIA</label>
+            <span id="gaia">0 €</span>
+          </div>
+
+          <div class="mini-kpi">
+            <label>ALS</label>
+            <span id="als">0 €</span>
+          </div>
+
+          <div class="mini-kpi">
+            <label>TFC</label>
+            <span id="tfc">0 €</span>
+          </div>
+
         </div>
+
       </div>
 
-      <div class="card">
-        <h3>Financement - Engagement</h3>
-        <div class="mini-grid">
-          <div class="mini-kpi"><label>FP</label><span id="fp">–</span></div>
-          <div class="mini-kpi"><label>Prêt GAIA</label><span id="gaia">–</span></div>
-          <div class="mini-kpi"><label>Prêt ALS</label><span id="als">–</span></div>
-          <div class="mini-kpi"><label>Total TFC</label><span id="tfc">–</span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Détail logements BRS</h3>
-        <div class="mini-grid">
-          <div class="mini-kpi"><label>BRS classique</label><span id="brsC">–</span></div>
-          <div class="mini-kpi"><label>BRS premium</label><span id="brsP">–</span></div>
-          <div class="mini-kpi"><label>Zone A</label><span id="brsA">–</span></div>
-          <div class="mini-kpi"><label>Zone B1</label><span id="brsB1">–</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card table-card">
-      <h3>Top opérations filtrées</h3>
-      <div id="tableOps"></div>
     </section>
 
   </div>
+
+  <script src="app.js"></script>
+
 </body>
 </html>
