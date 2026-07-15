@@ -1,46 +1,85 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Test Grist</title>
-
-    <script src="https://docs.getgrist.com/gri.jsscript>
-
-    <style>
-        body {
-            background: #111827;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        h1 {
-            color: orange;
-        }
-
-        .card {
-            background: #1f2937;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard BRS — FSGL</title>
+  style.css
+  https://docs.getgrist.com/grist-plugin-api.js
+  https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-
 <body>
 
-    <h1>Test Grist</h1>
+  <!-- BARRE DE FILTRES -->
+  <div id="filters">
+    <select id="f_commune"><option value="">Commune</option></select>
+    <select id="f_arr"><option value="">Arrondissement</option></select>
+    <select id="f_zonage"><option value="">Zonage</option></select>
+    <select id="f_typo"><option value="">Typologie</option></select>
+    <select id="f_operateur"><option value="">Opérateur</option></select>
+    <select id="f_statut"><option value="">Statut</option></select>
+    <select id="f_avanc"><option value="">Avancement</option></select>
+    <button id="reset">🔄 Réinitialiser</button>
+    <span id="rowCount">– lignes</span>
+  </div>
 
-    <div class="card">
-        Nombre de lignes :
-        <span id="nb">...</span>
+  <!-- GRILLE PRINCIPALE -->
+  <div id="grid">
+
+    <!-- COLONNE GAUCHE -->
+    <div class="col-left">
+      <div class="card">
+        <h3>Zonage (répartition)</h3>
+        <canvas id="pieZonage"></canvas>
+      </div>
+      <div class="card">
+        <h3>Engagement</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><label>Montant FP</label><span id="fp">–</span></div>
+          <div class="kpi"><label>Prêt GAIA</label><span id="gaia">–</span></div>
+          <div class="kpi"><label>Prêt ALS</label><span id="als">–</span></div>
+          <div class="kpi"><label>Acquisition TFC</label><span id="tfc">–</span></div>
+        </div>
+      </div>
     </div>
 
-<script src="app.js"></script>
+    <!-- COLONNE DROITE -->
+    <div class="col-right">
+      <div class="card big-kpi">
+        <h3>Nombre d'opérations</h3>
+        <div id="nbOp">–</div>
+      </div>
+      <div class="card">
+        <h3>Part de logement BRS</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><label>Nb logts total</label><span id="nbTot">–</span></div>
+          <div class="kpi"><label>Part BRS</label><span id="partBrs">–</span></div>
+          <div class="kpi"><label>BRS classique</label><span id="brsC">–</span></div>
+          <div class="kpi"><label>BRS premium</label><span id="brsP">–</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>BRS par zone</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><label>BRS zone A</label><span id="brsA">–</span></div>
+          <div class="kpi"><label>BRS zone B1</label><span id="brsB1">–</span></div>
+          <div class="kpi"><label>BRS total</label><span id="brsTot">–</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Logements par zone</h3>
+        <div class="kpi-grid">
+          <div class="kpi"><label>Zone A</label><span id="zA">–</span></div>
+          <div class="kpi"><label>Zone B1</label><span id="zB1">–</span></div>
+          <div class="kpi"><label>Total</label><span id="zTot">–</span></div>
+        </div>
+      </div>
+    </div>
 
+  </div>
+
+  <div id="status">Initialisation…</div>
+
+  <script src="app.js"></script>
 </body>
-
 </html>
