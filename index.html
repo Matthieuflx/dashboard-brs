@@ -1,128 +1,39 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
 
-  <title>Dashboard BRS - POC Grist</title>
+  <script src="https://docs.getgrist.com/grist-plugin-api.js">le>
+    body{
+      background:#111827;
+      color:white;
+      font-family:Arial,sans-serif;
+      padding:20px;
+    }
 
-  <link rel="stylesheet" href="style.css">
+    h1{
+      color:#f59e0b;
+    }
 
-  <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .card{
+      background:#1f2937;
+      padding:20px;
+      border-radius:10px;
+      margin-top:20px;
+    }
+  </style>
+
 </head>
+
 <body>
 
-  <div class="page">
+<h1>Test Grist</h1>
 
-    <header class="header">
-      <div>
-        <h1>Dashboard BRS</h1>
-        <p>POC GRIST - Grand Lyon</p>
-      </div>
-
-      <span class="badge">
-        FSGL
-      </span>
-    </header>
-
-    <section id="filters" class="filters">
-
-      <select id="f_commune">
-        <option value="">Commune</option>
-      </select>
-
-      <select id="f_arr">
-        <option value="">Arrondissement</option>
-      </select>
-
-      <select id="f_zonage">
-        <option value="">Zonage</option>
-      </select>
-
-      <select id="f_typo">
-        <option value="">Typologie</option>
-      </select>
-
-      <select id="f_operateur">
-        <option value="">Opérateur</option>
-      </select>
-
-      <select id="f_statut">
-        <option value="">Statut</option>
-      </select>
-
-      <button id="reset">
-        Réinitialiser
-      </button>
-
-    </section>
-
-    <section class="kpi-row">
-
-      <div class="kpi-card">
-        <span>Opérations</span>
-        <strong id="nbOp">0</strong>
-      </div>
-
-      <div class="kpi-card">
-        <span>Logements</span>
-        <strong id="nbTot">0</strong>
-      </div>
-
-      <div class="kpi-card">
-        <span>Logements BRS</span>
-        <strong id="brsTot">0</strong>
-      </div>
-
-      <div class="kpi-card">
-        <span>Part BRS</span>
-        <strong id="partBrs">0%</strong>
-      </div>
-
-    </section>
-
-    <section class="main-grid">
-
-      <div class="card">
-        <h3>Répartition zonage</h3>
-        <canvas id="pieZonage"></canvas>
-      </div>
-
-      <div class="card">
-
-        <h3>Financement</h3>
-
-        <div class="mini-grid">
-
-          <div class="mini-kpi">
-            <label>FP</label>
-            <span id="fp">0 €</span>
-          </div>
-
-          <div class="mini-kpi">
-            <label>GAIA</label>
-            <span id="gaia">0 €</span>
-          </div>
-
-          <div class="mini-kpi">
-            <label>ALS</label>
-            <span id="als">0 €</span>
-          </div>
-
-          <div class="mini-kpi">
-            <label>TFC</label>
-            <span id="tfc">0 €</span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
+<div class="card">
+  Nombre de lignes :
+  <span id="nb">...</span>
+</div>
 
 <script src="app.js"></script>
 
